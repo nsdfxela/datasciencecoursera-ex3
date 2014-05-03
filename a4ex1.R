@@ -29,10 +29,11 @@ best <- function(state, outcome) {
   if(max(outcomeData[,"State"]==state) == 0)
     stop("invalid state")
   
-  outcomeData[,neededColumns] <- lapply(outcomeData[,neededColumns], function(x) as.numeric(x))
-  minrate <- min(outcomeData[ outcomeData[,"State"] == state ,neededColumns])
+  outcomeData[,neededColumns] <- sapply(outcomeData[,neededColumns], function(x) as.numeric(x))
   
-  outcomeData
+  minrate <- min(outcomeData[ outcomeData[,"State"] == state ,neededColumns], na.rm = TRUE )
+  
+  min(outcomeData[outcomeData[,neededColumns] == minrate, "Hospital name"])
   ## Return hospital name in that state with lowest 30-day death
   ## rate
 }
