@@ -33,7 +33,10 @@ best <- function(state, outcome) {
   
   minrate <- min(outcomeData[ outcomeData[,"State"] == state ,neededColumns], na.rm = TRUE )
   
-  min(outcomeData[outcomeData[,neededColumns] == minrate, "Hospital name"])
+  
+  outcomeDataClean <- outcomeData [!is.na(outcomeData [,neededColumns]),]
+  resultSet <- sort(outcomeDataClean [outcomeDataClean[,neededColumns] == minrate & outcomeDataClean[,"State"] == state, "Hospital.Name"])
+  resultSet[1]
   ## Return hospital name in that state with lowest 30-day death
   ## rate
 }
