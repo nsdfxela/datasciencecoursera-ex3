@@ -25,7 +25,34 @@ rankall <- function(outcome, num = "best") {
   outcomeData[,neededColumns] <- sapply(outcomeData[,neededColumns], function(x) as.numeric(x))
   outcomeDataClean <- outcomeData [!is.na(outcomeData [,neededColumns]),]
   outcomeDataClean <- outcomeDataClean[,c("State", "Hospital.Name", names(outcomeDataClean)[neededColumns])]
-  outcome
+  colnames(outcomeDataClean) <- c("state", "hospital name", "rate")
+  
+  f <- as.factor(outcomeDataClean[,"state"])
+  outcomeDataGroupes <- split(outcomeDataClean, f)
+  
+  sortStateHospitals <- function(raw)
+  {
+    index <- with(raw, order(raw[,"rate"], raw[,"hospital name"]))
+    raw[index, ]
+  }
+  
+  ##result <- data.frame(hospital <- character(length(outcomeDataGroupes)),
+  ##                     state <- character(length(outcomeDataGroupes)) )
+  result <- data.frame()
+  for(i in 1:length(outcomeDataGroupes)){
+    
+    numl <- num
+    if(num == "best") numl <- 1
+    if(num == "worst") numl <-length(outcomeDataGroupes[[i]][,1]) 
+    
+    outcomeDataGroupes[[i]] <- sortStateHospitals(outcomeDataGroupes[[i]])
+                result [i,"hospital"]<- outcomeDataGroupes[[i]][numl,"hospital name"]
+                result [i,"state"]<- names(outcomeDataGroupes[i])
+                ##result [i,"state"]<- outcomeDataGroupes[[i]][num,"state"]
+  }
+  
+  result
+    
   ## For each state, find the hospital of the given rank
   ## Return a data frame with the hospital names and the
   ## (abbreviated) state name
